@@ -1,6 +1,7 @@
 from deepface import DeepFace
 import pandas as pd
 
+!pip3 freeze > requirements.txt
 
 
 class FacialIdentifier():
