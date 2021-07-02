@@ -4,6 +4,8 @@ from PIL import Image
 import os
 import numpy as np
 import logging
+import uuid
+
 models = ["VGG-Face", "Facenet", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib"]
 
 class FacialIdentifier():
@@ -12,7 +14,7 @@ class FacialIdentifier():
 
     def add_face(self,face,name):
         imgface = Image.fromarray(face)
-        imgface.save(os.path.join(self.dbpath))
+        imgface.save(os.path.join(self.dbpath,name,str(uuid.uuid4())+".jpg"))
 
     def find(self,face):
          return DeepFace.find(img_path=face,db_path="./Data/facebase",enforce_detection = False)
@@ -27,7 +29,8 @@ class FacialIdentifier():
 F = FacialIdentifier()
 
 
-image = Image.open(r"C:\Users\ASUS\Documents\Cogno\Data\Test\WIN_20210702_12_17_06_Pro.jpg")
+image = Image.open(r"C:\Users\ASUS\Documents\Cogno\Data\Test\WIN_20210702_12_29_40_Pro.jpg")
 narray = np.asarray(image)
 #F.find(narray).to_numpy()
-F.get_person(narray,prob_threshold=.3)
+F.get_person(narray,prob_threshold=.15)
+F.add_face(narray,"Pranav")
