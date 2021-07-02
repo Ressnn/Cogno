@@ -1,0 +1,2 @@
+deepface==0.0.62
+pandas==1.1.5
