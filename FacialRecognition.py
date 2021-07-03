@@ -13,8 +13,11 @@ class FacialIdentifier():
         self.dbpath = dbpath
 
     def add_face(self,face,name):
+        directory = os.path.join(self.dbpath, name)
+        os.makedirs(directory)
+
         imgface = Image.fromarray(face)
-        imgface.save(os.path.join(self.dbpath,name,str(uuid.uuid4())+".jpg"))
+        imgface.save(os.path.join(directory, str(uuid.uuid4()) + ".jpg"))
 
     def find(self,face):
          return DeepFace.find(img_path=face,db_path="./Data/facebase",enforce_detection = False)
@@ -26,11 +29,3 @@ class FacialIdentifier():
         else:
             logging.info("No suitable matches found")
             return -1
-F = FacialIdentifier()
-
-
-image = Image.open(r"C:\Users\ASUS\Documents\Cogno\Data\Test\WIN_20210702_12_29_40_Pro.jpg")
-narray = np.asarray(image)
-#F.find(narray).to_numpy()
-F.get_person(narray,prob_threshold=.15)
-F.add_face(narray,"Pranav")
