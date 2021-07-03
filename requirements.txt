@@ -1,2 +1,4 @@
 PyAudio==0.2.11
 SpeechRecognition==3.8.1
+deepface==0.0.62
+pandas==1.1.5

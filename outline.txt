@@ -1,0 +1,12 @@
+FaceBase.db
+
+-> TBL (face to name):
+  contains: face_landmarks , url to waveform of names
+
+-> FacialRecog.py:
+
+
+-> AudioBranch.py:
+
+
+Main.py
