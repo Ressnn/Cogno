@@ -14,11 +14,7 @@ class FacialIdentifier():
 
     def add_face(self,face,name):
         directory = os.path.join(self.dbpath, name)
-
-        try:
-            os.makedirs(directory)
-        except FileExistsError:
-            pass
+        os.makedirs(directory, exist_ok=True)
 
         imgface = Image.fromarray(face)
         imgface.save(os.path.join(directory, str(uuid.uuid4()) + ".jpg"))
