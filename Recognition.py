@@ -10,7 +10,8 @@ from playsound import playsound
 import random
 import pyaudio
 import wave
-
+import threading
+from collections import deque
 
 
 
@@ -20,6 +21,12 @@ class FacialIdentifier():
     def __init__(self,dbpath="./Data/facebase"):
         self.dbpath = dbpath
     def add_face(self,face,name):
+
+        try:
+            os.mkdir(os.path.join(self.dbpath,name))
+        except:
+            pass
+        
         imgface = Image.fromarray(face)
         imgface.save(os.path.join(self.dbpath,name,str(uuid.uuid4())+".jpg"))
 
@@ -35,26 +42,33 @@ class FacialIdentifier():
             return -1
 
 class AudioBuffer():
-    def __init__(self,dbpath):
+    def __init__(self,dbpath,seconds=3):
+
         self.dbpath = dbpath
         self.CHUNK = 1024
         self.FORMAT = pyaudio.paInt16
         self.CHANNELS = 2
         self.RATE = 44100
-        self.RECORD_SECONDS = 5
+        self.RECORD_SECONDS = seconds
 
         self.p = pyaudio.PyAudio()
-        self.stream = p.open(format=self.FORMAT,channels=self.CHANNELS,rate=self.RATE,input=True,frames_per_buffer=self.CHUNK)
-        self.frames = []
-
+        self.stream = self.p.open(format=self.FORMAT,channels=self.CHANNELS,rate=self.RATE,input=True,frames_per_buffer=self.CHUNK)
+        self.frames = deque()
         for i in range(0, int(self.RATE / self.CHUNK * self.RECORD_SECONDS)):
-            data = stream.read(self.CHUNK)
+            data = self.stream.read(self.CHUNK)
             self.frames.append(data)
 
+        self.AudioThread = threading.Thread(target=self._read_loop, args=())
+        self.AudioThread.start()
+
     def read(self):
-        data = stream.read(self.CHUNK)
+        data = self.stream.read(self.CHUNK)
         self.frames.append(data)
-        self.frames.pop(0)
+        self.frames.popleft()
+
+    def _read_loop(self):
+        while True:
+            self.read()
 
     def get(self):
         return self.frames
@@ -64,7 +78,7 @@ class AudioBuffer():
         self.stream.close()
         self.p.terminate()
 
-    def save(self,dbpath,name):
+    def save(self,name):
         try:
             os.mkdir(os.path.join(self.dbpath,name))
         except:
@@ -72,9 +86,9 @@ class AudioBuffer():
 
         wf = wave.open(os.path.join(self.dbpath,name,str(uuid.uuid4())+".wav"), 'wb')
         wf.setnchannels(self.CHANNELS)
-        wf.setsampwidth(p.get_sample_size(self.FORMAT))
+        wf.setsampwidth(self.p.get_sample_size(self.FORMAT))
         wf.setframerate(self.RATE)
-        wf.writeframes(b''.join(frames))
+        wf.writeframes(b''.join(list(self.frames)))
         wf.close()
 
 class SpeechRecognition():
