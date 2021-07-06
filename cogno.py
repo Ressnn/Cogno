@@ -9,6 +9,7 @@ import cv2
 
 
 class MainProcess():
+
     def __init__(self,display = False, facebase_path = "./Data/facebase", audiobase_path ="./Data/audiobase"):
         self.Face = FacialIdentifier(dbpath=facebase_path)
         self.AudioProcess = AudioBuffer(dbpath=audiobase_path)
@@ -35,10 +36,6 @@ class MainProcess():
         sounds = os.listdir(os.path.join(self.a_path,str(id)))
         playsound(os.path.join(os.path.join(self.a_path,str(id)),sounds[0]))
         return True
-
-
-    def _display_frame():
-
 
     def add_person(self,name = str(uuid.uuid4())):
         self.AudioProcess.save(name)
