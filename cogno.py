@@ -56,6 +56,7 @@ def GPIO_callback(channel):
     last_press = press_time
     action = 'double' if press_diff < 250 else 'single'
 
+
 if __name__ == '__main__':
     M = MainProcess(display=False)
     # Set GPIO mode to BCM (not sure what it means but it works)
