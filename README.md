@@ -1,4 +1,4 @@
-![cognologo](https://github.com/Ressnn/Cogno/blob/main/Data/assets/logos/Cogno_light_bkgremoved.png)
+![cognologo](https://github.com/Ressnn/Cogno/blob/main/Data/assets/logos/cogno_white.png)
 
 # Cogno
 
