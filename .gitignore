@@ -3,5 +3,6 @@
 .vscode/
 venv/
 
-Data/
+
 !Data/assets/
+!Data/assets/logos/Cogno_light_bkgremoved.png
