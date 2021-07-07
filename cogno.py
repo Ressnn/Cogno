@@ -57,6 +57,7 @@ def GPIO_callback(channel):
     action = 'double' if press_diff < 250 else 'single'
 
 if __name__ == '__main__':
+    M = MainProcess(display=False)
     # Set GPIO mode to BCM (not sure what it means but it works)
     GPIO.setmode(GPIO.BCM)
     # Setup pin 4 to accept GPIO input from touch sensor
@@ -73,9 +74,9 @@ if __name__ == '__main__':
             print(action + ' press.')
 
             if action == 'single':
-                pass  # TODO: Add handler for single press here
+                M.identify()
             elif action == 'double':
-                pass  # TODO: Add handler for double press here
+                M.add_person(str(uuid.uuid4()))
 
             action = None
 
