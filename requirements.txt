@@ -1,9 +1,8 @@
+playsound==1.2.2
+opencv_python==4.5.2.54
+pandas==1.1.5
+numpy==1.19.5
 PyAudio==0.2.11
 deepface==0.0.62
-pandas==1.1.5
-playsound==1.2.2
-numpy==1.19.5
-SpeechRecognition==3.8.1
-opencv_python==4.5.2.54
 Pillow==8.3.1
 RPi==0.0.1
