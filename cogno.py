@@ -10,6 +10,23 @@ import os
 
 class MainProcess():
     def __init__(self,display = False, facebase_path = "./Data/facebase", audiobase_path ="./Data/audiobase"):
+        """Short summary.
+
+        Parameters
+        ----------
+        display : type
+            Description of parameter `display`.
+        facebase_path : type
+            Description of parameter `facebase_path`.
+        audiobase_path : type
+            Description of parameter `audiobase_path`.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
         self.Face = FacialIdentifier(dbpath=facebase_path)
         self.AudioProcess = AudioBuffer(dbpath=audiobase_path)
         self.display = display
@@ -18,6 +35,14 @@ class MainProcess():
         self.vid = cv2.VideoCapture(0)
 
     def identify(self):
+        """Short summary.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
 
         ret, frame = self.vid.read()
         if self.display == True:
@@ -37,6 +62,19 @@ class MainProcess():
         return True
 
     def add_person(self,name = str(uuid.uuid4())):
+        """Short summary.
+
+        Parameters
+        ----------
+        name : type
+            Description of parameter `name`.
+
+        Returns
+        -------
+        add_person(self,name =
+            Description of returned object.
+
+        """
         self.AudioProcess.save(name)
         ret, frame = self.vid.read()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
