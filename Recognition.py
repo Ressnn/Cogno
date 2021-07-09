@@ -61,35 +61,36 @@ class FacialIdentifier():
 
     def find(self,face):
         """
-        Finds all possible faces that a person could be mn
+        Finds all possible faces that a person could be
 
         Parameters
         ----------
-        face : type
-            Description of parameter `face`.
+        face : numpy.array
+            A person's face in an image of proportions (w,h,3)
 
         Returns
         -------
-        type
-            Description of returned object.
+        pandas.Dataframe
+            A pandas dataframe with all of the possible faces in the frame
 
         """
         return DeepFace.find(img_path=face,db_path="./Data/facebase",enforce_detection = False)
 
     def get_person(self,face,prob_threshold=.04):
-        """Short summary.
+        """
+        Gets the person most present in the frame
 
         Parameters
         ----------
-        face : type
-            Description of parameter `face`.
-        prob_threshold : type
-            Description of parameter `prob_threshold`.
+        face : np.array
+            numpy array of an image with a face in it
+        prob_threshold : float
+            the cosine threshold to say that a person is someone that was recognized
 
         Returns
         -------
-        type
-            Description of returned object.
+        String
+            Returns the string of the person's name
 
         """
         connectors = self.find(face).to_numpy()
@@ -101,19 +102,20 @@ class FacialIdentifier():
 
 class AudioBuffer():
     def __init__(self,dbpath,seconds=3):
-        """Short summary.
+        """
+        An audiobuffer that keeps the last few seconds of audio in memory
 
         Parameters
         ----------
-        dbpath : type
-            Description of parameter `dbpath`.
-        seconds : type
-            Description of parameter `seconds`.
+        dbpath : String
+            The path to the audiobase.
+        seconds : float or int
+            The the amount of time to keep in memory
 
         Returns
         -------
-        type
-            Description of returned object.
+        NoneType
+            None
 
         """
 
@@ -135,12 +137,13 @@ class AudioBuffer():
         self.AudioThread.start()
 
     def read(self):
-        """Short summary.
+        """
+        Reads another moment of the audio and adds it to the buffer whiled popleft() in the last second
 
         Returns
         -------
-        type
-            Description of returned object.
+        NoneType
+            None
 
         """
         data = self.stream.read(self.CHUNK)
@@ -148,35 +151,38 @@ class AudioBuffer():
         self.frames.popleft()
 
     def _read_loop(self):
-        """Short summary.
+        """
+        Loops the read function
 
         Returns
         -------
-        type
-            Description of returned object.
+        NoneType
+            None
 
         """
         while True:
             self.read()
 
     def get(self):
-        """Short summary.
+        """
+        Gets the last few seconds of the audiobuffer
 
         Returns
         -------
-        type
-            Description of returned object.
+        deque
+            A deque with raw audio data from PyAudio
 
         """
         return self.frames
 
     def close(self):
-        """Short summary.
+        """
+        Closes the pyaudio stream and stops recording
 
         Returns
         -------
-        type
-            Description of returned object.
+        NoneType
+            None
 
         """
         self.stream.stop_stream()
@@ -184,17 +190,18 @@ class AudioBuffer():
         self.p.terminate()
 
     def save(self,name):
-        """Short summary.
+        """
+        Saves the audiostream to a file under the audiobase with a folder called "name"
 
         Parameters
         ----------
-        name : type
-            Description of parameter `name`.
+        name : str
+            Name to save the folder under in the audiobase
 
         Returns
         -------
-        type
-            Description of returned object.
+        NoneType
+            None
 
         """
         try:

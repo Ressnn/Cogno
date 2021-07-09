@@ -10,21 +10,22 @@ import os
 
 class MainProcess():
     def __init__(self,display = False, facebase_path = "./Data/facebase", audiobase_path ="./Data/audiobase"):
-        """Short summary.
+        """
+        Constructor for the MainProcess of cogno
 
         Parameters
         ----------
-        display : type
-            Description of parameter `display`.
-        facebase_path : type
-            Description of parameter `facebase_path`.
-        audiobase_path : type
-            Description of parameter `audiobase_path`.
+        display : Boolean
+            Display Frames for Debugging?
+        facebase_path : String
+            path to facebase to match
+        audiobase_path : String
+            path to audiobase with pronunciations
 
         Returns
         -------
-        type
-            Description of returned object.
+        NoneType
+            None
 
         """
         self.Face = FacialIdentifier(dbpath=facebase_path)
@@ -35,12 +36,13 @@ class MainProcess():
         self.vid = cv2.VideoCapture(0)
 
     def identify(self):
-        """Short summary.
+        """
+        Identifies ther person in the frame and repeats the name back in the user's ear
 
         Returns
         -------
-        type
-            Description of returned object.
+        Boolean
+            True if face was discovered False if otherwise
 
         """
 
@@ -52,7 +54,7 @@ class MainProcess():
             print(id)
         except:
             print("No Face in Frame")
-            return -1
+            return False
 
         if id == -1:
             return False
@@ -62,17 +64,18 @@ class MainProcess():
         return True
 
     def add_person(self,name = str(uuid.uuid4())):
-        """Short summary.
+        """
+        Adds a person to the audio and facebase
 
         Parameters
         ----------
-        name : type
-            Description of parameter `name`.
+        name : String
+            The name to store a person by in the databases
 
         Returns
         -------
-        add_person(self,name =
-            Description of returned object.
+        NoneType
+            None
 
         """
         self.AudioProcess.save(name)
