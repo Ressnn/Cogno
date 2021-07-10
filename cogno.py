@@ -9,7 +9,7 @@ import cv2
 import os
 
 class MainProcess():
-    def __init__(self,display = False, facebase_path = "./Data/facebase", audiobase_path ="./Data/audiobase"):
+    def __init__(self,display = False, facebase_path = "./Data/facebase", audiobase_path ="./Data/audiobase", flip_image = False):
         """
         Constructor for the MainProcess of cogno
 
@@ -28,6 +28,7 @@ class MainProcess():
             None
 
         """
+        self.flip = flip_image
         self.Face = FacialIdentifier(dbpath=facebase_path)
         self.AudioProcess = AudioBuffer(dbpath=audiobase_path)
         self.display = display
@@ -47,6 +48,9 @@ class MainProcess():
         """
 
         ret, frame = self.vid.read()
+        if self.flip == True:
+            frame = cv2.flip(frame,0)
+
         if self.display == True:
             cv2.imshow('frame', frame)
         try:
@@ -80,6 +84,10 @@ class MainProcess():
         """
         self.AudioProcess.save(name)
         ret, frame = self.vid.read()
+
+        if self.flip == True:
+            frame = cv2.flip(frame,0)
+
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self.Face.add_face(frame,name)
         self.Face = FacialIdentifier(dbpath=self.f_path)
@@ -99,7 +107,7 @@ def GPIO_callback(channel):
 
 
 if __name__ == '__main__':
-    M = MainProcess(display=False)
+    M = MainProcess(display=False,flip_image=True)
     # Set GPIO mode to BCM (not sure what it means but it works)
     GPIO.setmode(GPIO.BCM)
     # Setup pin 4 to accept GPIO input from touch sensor
