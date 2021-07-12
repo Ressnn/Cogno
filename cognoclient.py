@@ -30,18 +30,22 @@ class AudioBuffer():
         """
 
         self.dbpath = dbpath
-        self.CHUNK = 1024
+        self.CHUNK = 2048
         self.FORMAT = pyaudio.paInt16
-        self.CHANNELS = 2
+        self.CHANNELS = 1
         self.RATE = 44100
         self.RECORD_SECONDS = seconds
 
         self.p = pyaudio.PyAudio()
-        self.stream = self.p.open(format=self.FORMAT,channels=self.CHANNELS,rate=self.RATE,input=True,frames_per_buffer=self.CHUNK)
+        self.stream = self.p.open(format=self.FORMAT, channels=self.CHANNELS, rate=self.RATE, input=True, frames_per_buffer=self.CHUNK, input_device_index=1)
         self.frames = deque()
-        for i in range(0, int(self.RATE / self.CHUNK * self.RECORD_SECONDS)):
-            data = self.stream.read(self.CHUNK)
-            self.frames.append(data)
+
+        try:
+            for i in range(0, int(self.RATE / self.CHUNK * self.RECORD_SECONDS)):
+                data = self.stream.read(self.CHUNK)
+                self.frames.append(data)
+        except:
+            pass
 
         self.AudioThread = threading.Thread(target=self._read_loop, args=())
         self.AudioThread.start()
