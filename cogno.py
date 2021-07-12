@@ -177,43 +177,7 @@ class ServerProcess():
         self.Face = FacialIdentifier(dbpath=self.f_path)
 
 
-# Global variables used specifically for GPIO callback
-GPIO_action = None
-last_press = 0
 
-def GPIO_callback(channel):
-    global action, last_press
-
-    press_time = round(time.time() * 1000)
-    press_diff = press_time - last_press
-
-    last_press = press_time
-    action = 'double' if press_diff < 250 else 'single'
-
-
-if __name__ == '__main__':
-    M = MainProcess(display=False,flip_image=True)
-    # Set GPIO mode to BCM (not sure what it means but it works)
-    GPIO.setmode(GPIO.BCM)
-    # Setup pin 4 to accept GPIO input from touch sensor
-    GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-    # Add event listener for touch sensor GPIO pin
-    GPIO.add_event_detect(4, GPIO.BOTH, GPIO_callback)
-
-    # Throw main thread into action loop
-    while True:
-        ms_since_last_press = round(time.time() * 1000) - last_press
-
-        if action and ms_since_last_press > 200:
-            print(action + ' press.')
-
-            if action == 'single':
-                M.identify()
-            elif action == 'double':
-                M.add_person(str(uuid.uuid4()))
-
-            action = None
 
 # if __name__ == "__main__":
 #     M = MainProcess(display=True)
