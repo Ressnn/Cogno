@@ -30,27 +30,22 @@ while True:
     # 1 for identification, 2 for addition
     instruction = int.from_bytes(data.recv(4), 'little')
 
+    # Read size of image and declare empty byte array for image data
+    size = int.from_bytes(data.recv(4), 'little')
+    img = b''
+
+    # Read image in 4096 bytes at a time
+    for _ in range(size // 4096):
+        img += conn.recv(4096)
+
+    # Read the last nugget of the image and turn it into a numpy array
+    img += conn.recv(size % 4096)
+    img = np.frombuffer(img, dtype=np.uint8)
+    img = cv2.imdecode(img, cv2.IMREAD_COLOR)
+
     if instruction == 1:
-        size = int.from_bytes(data.recv(4), 'little')
-        img = b''
-
-        for _ in range(size // 4096):
-            img += conn.recv(4096)
-
-        img += conn.recv(size % 4096)
-        img = np.frombuffer(img, dtype=np.uint8)
-
         
     elif instruction == 2:
-        size = int.from_bytes(data.recv(4), 'little')
-        img = b''
-
-        while _ in range(size // 4096):
-            img += conn.recv(4096)
-
-        img += conn.recv(size % 4096)
-        img = np.frombuffer(img, dtype=np.uint8)
-
 
     else:
 
