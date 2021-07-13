@@ -203,12 +203,7 @@ if __name__ == '__main__':
                 img_size = len(img)
 
                 client_socket.send(img_size.to_bytes(4, 'little'))
-
-                for i in range(img_size // 4096):
-                    client_socket.send(img[i * 4096:(i + 1) * 4096])
-
-                # Send the image along with its length
-                client_socket.send(img[-(img_size % 4096):])
+                client_socket.sendall(img)
 
                 # Send the UUID along with its length
                 client_socket.send(len(id).to_bytes(4, 'little'))
@@ -220,7 +215,7 @@ if __name__ == '__main__':
 
                 # Send the image across the socket with its size
                 client_socket.send(len(img).to_bytes(4, 'little'))
-                client_socket.send(img)
+                client_socket.sendall(img)
 
                 # Read UUID from server
                 id_len = int.from_bytes(client_socket.recv(4), 'little')
