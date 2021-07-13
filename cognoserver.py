@@ -108,11 +108,11 @@ while True:
 
         # Send back the length of the UUID string as well as the string itself
         conn.send(len(uuid).to_bytes(4, 'little'))
-        conn.send(uuid)
+        conn.send(bytes(uuid, 'utf-8'))
     elif instruction == 2:
         # Read in the UUID string
         uuid_len = int.from_bytes(conn.recv(4), 'little')
-        uuid = str(conn.recv(uuid_len))
+        uuid = conn.recv(uuid_len).decode('utf-8')
 
         # Get handler to add person to deepface database
         handler.add_person(img, uuid)

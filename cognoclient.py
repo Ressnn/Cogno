@@ -192,7 +192,7 @@ if __name__ == '__main__':
 
             if GPIO_action == 'double':
                 # Create new UUID and save audio file under that name
-                id = str(uuid.uuid4())
+                id = bytes(str(uuid.uuid4()), 'utf-8')
                 audio_buffer.save(id)
 
                 # Read single camera frame
@@ -217,7 +217,7 @@ if __name__ == '__main__':
 
                 # Read UUID from server
                 id_len = int.from_bytes(client_socket.recv(4), 'little')
-                id = str(client_socket.recv(id_len))
+                id = client_socket.recv(id_len).decode('utf-8')
 
                 # Play sound from saved wav file
                 playsound(id + '.wav')
