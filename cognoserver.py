@@ -37,9 +37,7 @@ class ServerHandler():
 
         """
 
-        # frame = image
-        if self.flip == True:
-            image = cv2.flip(image, 0)
+        image = cv2.flip(image, 0)
 
         try:
             id = self.Face.get_person(image, prob_threshold=1)
@@ -71,9 +69,7 @@ class ServerHandler():
 
         """
 
-        if self.flip == True:
-            image = cv2.flip(image, 0)
-
+        image = cv2.flip(image, 0)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         self.Face.add_face(image, name)
 
