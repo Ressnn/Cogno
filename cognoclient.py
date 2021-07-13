@@ -222,7 +222,7 @@ if __name__ == '__main__':
             elif GPIO_action == 'single':
                 # Capture a frame and encode it in JPEG
                 _, img = camera.read()
-                img = cv2.imencode('.jpg', img)[1].tobytes()
+                img = cv2.imencode('.jpg', img)[1]
 
                 data = pickle.dumps(img, 0)
                 size = len(data)
