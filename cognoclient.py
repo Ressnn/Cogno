@@ -191,7 +191,7 @@ if __name__ == '__main__':
 
                 # Read single camera frame
                 _, img = camera.read()
-                img = cv2.imencode('.jpg', img).tobytes()
+                img = cv2.imencode('.jpg', img)[1].tobytes()
 
                 # Send the image along with its length
                 client_socket.send(len(img).to_bytes(4, 'little'))
@@ -203,7 +203,7 @@ if __name__ == '__main__':
             elif GPIO_action == 'single':
                 # Capture a frame and encode it in JPEG
                 _, img = camera.read()
-                img = cv2.imencode('.jpg', img).tobytes()
+                img = cv2.imencode('.jpg', img)[1].tobytes()
 
                 # Send the image across the socket with its size
                 client_socket.send(len(img).to_bytes(4, 'little'))
