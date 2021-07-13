@@ -78,30 +78,11 @@ class ServerHandler():
 HOST=''
 PORT=8485
 
-# Create, bind, and listen on a socket
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((HOST,PORT))
-s.listen(10)
-
-handler = ServerHandler()
-
-while True:
-    conn, addr = s.accept()
-
-    # 1 for identification, 2 for addition
-    instruction = int.from_bytes(conn.recv(4), 'little')
-
-    # Read size of image and declare empty byte array for image data
-    size = int.from_bytes(conn.recv(4), 'little')
+def recv_img():
     data = b''
-
-    # WHOLE SECTION COPIED FOR READING IMAGE
-
     payload_size = struct.calcsize('>L')
-    print("payload_size: {}".format(payload_size))
 
     while len(data) < payload_size:
-        print("Recv: {}").format(len(data))
         data += conn.recv(4096)
     
     packed_msg_size = data[:payload_size]
@@ -118,17 +99,23 @@ while True:
     print('fuck u computer')
 
     img = pickle.loads(frame_data, fix_imports=True, encoding='bytes')
-    img = cv2.imdecode(img, cv2.IMREAD_COLOR)
+    return cv2.imdecode(img, cv2.IMREAD_COLOR)
 
+# Create, bind, and listen on a socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((HOST,PORT))
+s.listen(10)
 
-    # Read image in 4096 bytes at a time
-    # for _ in range(size // 4096):
-    #     img += conn.recv(4096)
+handler = ServerHandler()
 
-    # # Read the last nugget of the image and turn it into a numpy array
-    # img += conn.recv(size % 4096)
-    # img = np.frombuffer(img, dtype=np.uint8)
-    # img = cv2.imdecode(img, cv2.IMREAD_COLOR)
+while True:
+    conn, addr = s.accept()
+
+    # 1 for identification, 2 for addition
+    instruction = int.from_bytes(conn.recv(4), 'little')
+
+    # Read size of image and declare empty byte array for image data
+    img = recv_img()
 
     cv2.imshow('Img', img)
     cv2.waitKey()

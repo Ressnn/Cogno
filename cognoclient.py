@@ -167,6 +167,12 @@ def GPIO_callback(channel):
     last_press = press_time
     GPIO_action = 'double' if press_diff < 250 else 'single'
 
+def send_img(img):
+    img = cv2.imencode('.jpg', img)[1]
+    data = pickle.dumps(img, 0)
+    size = len(data)
+
+    client_socket.sendall(struct.pack(">L", size) + data)
 
 if __name__ == '__main__':
     camera = cv2.VideoCapture(0)
@@ -200,40 +206,14 @@ if __name__ == '__main__':
                 audio_buffer.save(id)
 
                 # Read single camera frame
-                img = camera.read()[1]
-                img = cv2.imencode('.jpg', img)[1]
-
-                data = pickle.dumps(img, 0)
-                size = len(data)
-
-                client_socket.sendall(struct.pack(">L", size) + data)
-
-                # client_socket.send(img_size.to_bytes(4, 'little'))
-
-                # for i in range(img_size // 4096):
-                #     client_socket.send(img[i * 4096:(i + 1) * 4096])
-
-                # # Send the image along with its length
-                # client_socket.send(img[-(img_size % 4096):])
+                send_img(camera.read()[1])
 
                 # Send the UUID along with its length
                 client_socket.send(len(id).to_bytes(4, 'little'))
                 client_socket.send(id)
             elif GPIO_action == 'single':
                 # Capture a frame and encode it in JPEG
-                _, img = camera.read()
-
-                encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
-                img = cv2.imencode('.jpg', img, encode_param)[1]
-
-                data = pickle.dumps(img, 0)
-                size = len(data)
-
-                client_socket.sendall(struct.pack(">L", size) + data)
-
-                # Send the image across the socket with its size
-                # client_socket.send(len(img).to_bytes(4, 'little'))
-                # client_socket.send(img)
+                send_img(camera.read()[1])
 
                 # Read UUID from server
                 id_len = int.from_bytes(client_socket.recv(4), 'little')
