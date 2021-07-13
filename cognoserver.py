@@ -85,11 +85,11 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST,PORT))
 s.listen(10)
 
-conn, addr = s.accept()
-
 handler = ServerHandler()
 
 while True:
+    conn, addr = s.accept()
+
     # 1 for identification, 2 for addition
     instruction = int.from_bytes(conn.recv(4), 'little')
 
@@ -125,5 +125,6 @@ while True:
         conn.send((44).to_bytes(4, 'little'))
     else:
         print(f'Unrecognized command: {instruction}.')
-    
+
+    conn.close()
     

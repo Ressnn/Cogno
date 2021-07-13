@@ -46,7 +46,7 @@ class AudioBuffer():
             frames_per_buffer=self.CHUNK,
             input_device_index=1
         )
-        
+
         self.frames = deque()
 
         try:
@@ -163,9 +163,6 @@ def GPIO_callback(channel):
 
 
 if __name__ == '__main__':
-    # Connect to server using sockets.io
-    connect_server()
-
     camera = cv2.VideoCapture(0)
 
     # Initialize audio buffer
@@ -184,6 +181,7 @@ if __name__ == '__main__':
         ms_since_last_press = round(time.time() * 1000) - last_press
 
         if GPIO_action and ms_since_last_press > 200:
+            connect_server()
             print(GPIO_action + ' press.')
 
             if GPIO_action == 'double':
