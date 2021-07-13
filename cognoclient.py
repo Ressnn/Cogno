@@ -127,12 +127,8 @@ class AudioBuffer():
             None
 
         """
-        try:
-            os.mkdir(os.path.join(self.dbpath, name))
-        except:
-            pass
 
-        wf = wave.open(os.path.join(self.dbpath, name, str(uuid.uuid4()) + ".wav"), 'wb')
+        wf = wave.open(os.path.join(self.dbpath, name + '.wav'), 'wb')
         wf.setnchannels(self.CHANNELS)
         wf.setsampwidth(self.p.get_sample_size(self.FORMAT))
         wf.setframerate(self.RATE)
@@ -225,7 +221,7 @@ if __name__ == '__main__':
                 id = client_socket.recv(id_len).decode('utf-8')
 
                 # Play sound from saved wav file
-                playsound(id + '.wav')
+                playsound(os.path.join(audio_buffer.dbpath, id + '.wav'))
 
             GPIO_action = None
             close_connection()
