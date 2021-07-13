@@ -91,14 +91,14 @@ while True:
 
     # Read size of image and declare empty byte array for image data
     size = int.from_bytes(conn.recv(4), 'little')
-    # img = b''
+    img = b''
 
     # Read image in 4096 bytes at a time
-    # for _ in range(size // 4096):
-    #     img += conn.recv(4096)
+    for _ in range(size // 4096):
+        img += conn.recv(4096)
 
     # Read the last nugget of the image and turn it into a numpy array
-    img = conn.recv(size)
+    img += conn.recv(size % 4096)
     img = np.frombuffer(img, dtype=np.uint8)
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
