@@ -149,6 +149,11 @@ def connect_server():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect(('192.168.1.5', 8485))
 
+def close_connection():
+    global client_socket
+
+    client_socket.close()
+    client_socket = None
 
 # Global variables used specifically for GPIO callback
 GPIO_action = None
@@ -223,3 +228,4 @@ if __name__ == '__main__':
                 playsound(id + '.wav')
 
             GPIO_action = None
+            close_connection()

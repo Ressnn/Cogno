@@ -125,6 +125,4 @@ while True:
         conn.send((44).to_bytes(4, 'little'))
     else:
         print(f'Unrecognized command: {instruction}.')
-
-    conn.close()
     
