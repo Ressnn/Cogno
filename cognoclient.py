@@ -198,12 +198,17 @@ if __name__ == '__main__':
                 audio_buffer.save(id)
 
                 # Read single camera frame
-                _, img = camera.read()
+                img = camera.read()[1]
                 img = cv2.imencode('.jpg', img)[1].tobytes()
+                img_size = len(img)
+
+                client_socket.send(img_size.to_bytes(4, 'little'))
+
+                for i in range(img_size // 4096):
+                    client_socket.send(img[i * 4096:(i + 1) * 4096])
 
                 # Send the image along with its length
-                client_socket.send(len(img).to_bytes(4, 'little'))
-                client_socket.send(img)
+                client_socket.send(img[-(img_size % 4096):])
 
                 # Send the UUID along with its length
                 client_socket.send(len(id).to_bytes(4, 'little'))

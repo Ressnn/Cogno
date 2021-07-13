@@ -95,7 +95,7 @@ class FacialIdentifier():
         """
         connectors = self.find(face).to_numpy()
         if float(connectors[0,1])<=prob_threshold:
-            return os.path.split(os.path.split(connectors[0,0])[0])[-1]
+            return (os.path.split(os.path.split(connectors[0,0])[0])[-1]).split("\\")[-1]
         else:
             logging.info("No suitable matches found")
             return -1
