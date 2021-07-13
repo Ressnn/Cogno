@@ -171,10 +171,10 @@ if __name__ == '__main__':
     # Set GPIO mode to BCM (not sure what it means but it works)
     GPIO.setmode(GPIO.BCM)
     # Setup pin 4 to accept GPIO input from touch sensor
-    GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     # Add event listener for touch sensor GPIO pin
-    GPIO.add_event_detect(4, GPIO.BOTH, GPIO_callback)
+    GPIO.add_event_detect(17, GPIO.BOTH, GPIO_callback)
 
     # Throw main thread into action loop
     while True:
