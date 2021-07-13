@@ -98,7 +98,10 @@ while True:
     # WHOLE SECTION COPIED FOR READING IMAGE
 
     payload_size = struct.calcsize('>L')
+    print("payload_size: {}".format(payload_size))
+
     while len(data) < payload_size:
+        print("Recv: {}").format(len(data))
         data += conn.recv(4096)
     
     packed_msg_size = data[:payload_size]
