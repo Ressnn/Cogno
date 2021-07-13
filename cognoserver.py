@@ -98,19 +98,19 @@ while True:
     # WHOLE SECTION COPIED FOR READING IMAGE
 
     payload_size = struct.calcsize('>L')
-    while len(img) < payload_size:
+    while len(data) < payload_size:
         data += conn.recv(4096)
     
     packed_msg_size = img[:payload_size]
-    data = img[payload_size:]
+    data = data[payload_size:]
 
     msg_size = struct.unpack('>L', packed_msg_size)[0]
 
-    while len(img) < msg_size:
+    while len(data) < msg_size:
         data += conn.recv(4096)
     
-    frame_data = img[:msg_size]
-    data = img[msg_size:]
+    frame_data = data[:msg_size]
+    data = data[msg_size:]
 
     img = pickle.loads(frame_data, fix_imports=True, encoding='bytes')
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
