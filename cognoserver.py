@@ -39,7 +39,7 @@ class ServerHandler():
 
         """
 
-        # image = cv2.flip(image, 0)
+        image = cv2.flip(image, 0)
 
         try:
             id = self.Face.get_person(image, prob_threshold=1)
@@ -71,7 +71,7 @@ class ServerHandler():
 
         """
 
-        # image = cv2.flip(image, 0)
+        image = cv2.flip(image, 0)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         self.Face.add_face(image, name)
 
@@ -116,9 +116,6 @@ while True:
 
     # Read size of image and declare empty byte array for image data
     img = recv_img()
-
-    cv2.imshow('Img', img)
-    cv2.waitKey()
 
     if instruction == 1:
         # Get the handler to identify the person
