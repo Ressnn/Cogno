@@ -101,7 +101,7 @@ while True:
     while len(data) < payload_size:
         data += conn.recv(4096)
     
-    packed_msg_size = img[:payload_size]
+    packed_msg_size = data[:payload_size]
     data = data[payload_size:]
 
     msg_size = struct.unpack('>L', packed_msg_size)[0]
