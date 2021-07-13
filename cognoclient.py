@@ -1,6 +1,8 @@
 import cv2
 import socket
 import time
+import struct
+import pickle
 import pyaudio
 from pydub import AudioSegment
 from pydub.playback import play
@@ -200,15 +202,19 @@ if __name__ == '__main__':
                 # Read single camera frame
                 img = camera.read()[1]
                 img = cv2.imencode('.jpg', img)[1].tobytes()
-                img_size = len(img)
 
-                client_socket.send(img_size.to_bytes(4, 'little'))
+                data = pickle.dumps(img, 0)
+                size = len(data)
 
-                for i in range(img_size // 4096):
-                    client_socket.send(img[i * 4096:(i + 1) * 4096])
+                client_socket.sendall(struct.pack(">L", size) + data)
 
-                # Send the image along with its length
-                client_socket.send(img[-(img_size % 4096):])
+                # client_socket.send(img_size.to_bytes(4, 'little'))
+
+                # for i in range(img_size // 4096):
+                #     client_socket.send(img[i * 4096:(i + 1) * 4096])
+
+                # # Send the image along with its length
+                # client_socket.send(img[-(img_size % 4096):])
 
                 # Send the UUID along with its length
                 client_socket.send(len(id).to_bytes(4, 'little'))
@@ -218,9 +224,14 @@ if __name__ == '__main__':
                 _, img = camera.read()
                 img = cv2.imencode('.jpg', img)[1].tobytes()
 
+                data = pickle.dumps(img, 0)
+                size = len(data)
+
+                client_socket.sendall(struct.pack(">L", size) + data)
+
                 # Send the image across the socket with its size
-                client_socket.send(len(img).to_bytes(4, 'little'))
-                client_socket.send(img)
+                # client_socket.send(len(img).to_bytes(4, 'little'))
+                # client_socket.send(img)
 
                 # Read UUID from server
                 id_len = int.from_bytes(client_socket.recv(4), 'little')

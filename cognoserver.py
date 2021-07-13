@@ -1,5 +1,7 @@
 from Recognition import FacialIdentifier
 import numpy as np
+import struct
+import pickle
 import socket
 import cv2
 
@@ -93,14 +95,35 @@ while True:
     size = int.from_bytes(conn.recv(4), 'little')
     img = b''
 
-    # Read image in 4096 bytes at a time
-    for _ in range(size // 4096):
-        img += conn.recv(4096)
+    # WHOLE SECTION COPIED FOR READING IMAGE
 
-    # Read the last nugget of the image and turn it into a numpy array
-    img += conn.recv(size % 4096)
-    img = np.frombuffer(img, dtype=np.uint8)
+    payload_size = struct.calcsize('>L')
+    while len(img) < payload_size:
+        img += conn.recv(4096)
+    
+    packed_msg_size = img[:payload_size]
+    img = img[payload_size:]
+
+    msg_size = struct.unpack('>L', packed_msg_size)[0]
+
+    while len(img) < msg_size:
+        data += conn.recv(4096)
+    
+    frame_data = img[:msg_size]
+    data = img[msg_size:]
+
+    img = pickle.loads(frame_data, fix_imports=True, encoding='bytes')
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
+
+
+    # Read image in 4096 bytes at a time
+    # for _ in range(size // 4096):
+    #     img += conn.recv(4096)
+
+    # # Read the last nugget of the image and turn it into a numpy array
+    # img += conn.recv(size % 4096)
+    # img = np.frombuffer(img, dtype=np.uint8)
+    # img = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
     cv2.imshow('Img', img)
     cv2.waitKey()
