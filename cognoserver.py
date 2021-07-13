@@ -1,10 +1,81 @@
-import socket
-import sys
-import cv2
-import pickle
+from Recognition import FacialIdentifier
 import numpy as np
-import struct ## new
-import zlib
+import socket
+import cv2
+
+class ServerHandler():
+    def __init__(self, facebase_path="./Data/facebase"):
+        """
+        Constructor for the MainProcess of cogno
+
+        Parameters
+        ----------
+        display : Boolean
+            Display Frames for Debugging?
+        facebase_path : String
+            path to facebase to match
+        audiobase_path : String
+            path to audiobase with pronunciations
+
+        Returns
+        -------
+        NoneType
+            None
+
+        """
+        self.Face = FacialIdentifier(dbpath=facebase_path)
+        self.f_path = facebase_path
+
+    def identify(self, image):
+        """
+        Identifies ther person in the frame and repeats the name back in the user's ear
+
+        Returns
+        -------
+        Boolean
+            True if face was discovered False if otherwise
+
+        """
+
+        # frame = image
+        if self.flip == True:
+            image = cv2.flip(image, 0)
+
+        try:
+            id = self.Face.get_person(image, prob_threshold=1)
+            print(id)
+        except:
+            print("No Face in Frame")
+            return False
+
+        if id == -1:
+            return False
+
+        #sounds = os.listdir(os.path.join(self.a_path,str(id)))
+        #fp os.path.join(os.path.join(self.a_path,str(id)),sounds[0])
+        return str(id)
+
+    def add_person(self, image, name):
+        """
+        Adds a person to the audio and facebase
+
+        Parameters
+        ----------
+        name : String
+            The name to store a person by in the databases
+
+        Returns
+        -------
+        NoneType
+            None
+
+        """
+
+        if self.flip == True:
+            image = cv2.flip(image, 0)
+
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        self.Face.add_face(image, name)
 
 HOST=''
 PORT=8485

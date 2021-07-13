@@ -37,7 +37,16 @@ class AudioBuffer():
         self.RECORD_SECONDS = seconds
 
         self.p = pyaudio.PyAudio()
-        self.stream = self.p.open(format=self.FORMAT, channels=self.CHANNELS, rate=self.RATE, input=True, frames_per_buffer=self.CHUNK, input_device_index=1)
+
+        self.stream = self.p.open(
+            format=self.FORMAT,
+            channels=self.CHANNELS,
+            rate=self.RATE,
+            input=True,
+            frames_per_buffer=self.CHUNK,
+            input_device_index=1
+        )
+        
         self.frames = deque()
 
         try:
