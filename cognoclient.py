@@ -2,7 +2,8 @@ import cv2
 import socket
 import time
 import pyaudio
-from playsound import playsound
+from pydub import AudioSegment
+from pydub.playback import play
 import wave
 import uuid
 from collections import deque
@@ -221,7 +222,8 @@ if __name__ == '__main__':
                 id = client_socket.recv(id_len).decode('utf-8')
 
                 # Play sound from saved wav file
-                playsound(os.path.join(audio_buffer.dbpath, id + '.wav'))
+                sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
+                play(sound)
 
             GPIO_action = None
             close_connection()
