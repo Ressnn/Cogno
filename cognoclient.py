@@ -144,6 +144,8 @@ class AudioBuffer():
 client_socket = None
 
 def connect_server():
+    global client_socket
+
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect(('192.168.1.5', 8485))
 
