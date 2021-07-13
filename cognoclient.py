@@ -202,7 +202,7 @@ if __name__ == '__main__':
 
             if GPIO_action == 'double':
                 # Create new UUID and save audio file under that name
-                id = bytes(str(uuid.uuid4()), 'utf-8')
+                id = str(uuid.uuid4())
                 audio_buffer.save(id)
 
                 # Read single camera frame
@@ -210,7 +210,7 @@ if __name__ == '__main__':
 
                 # Send the UUID along with its length
                 client_socket.send(len(id).to_bytes(4, 'little'))
-                client_socket.send(id)
+                client_socket.send(bytes(id, 'utf-8'))
             elif GPIO_action == 'single':
                 # Capture a frame and encode it in JPEG
                 send_img(camera.read()[1])
