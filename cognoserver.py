@@ -93,16 +93,16 @@ while True:
 
     # Read size of image and declare empty byte array for image data
     size = int.from_bytes(conn.recv(4), 'little')
-    img = b''
+    data = b''
 
     # WHOLE SECTION COPIED FOR READING IMAGE
 
     payload_size = struct.calcsize('>L')
     while len(img) < payload_size:
-        img += conn.recv(4096)
+        data += conn.recv(4096)
     
     packed_msg_size = img[:payload_size]
-    img = img[payload_size:]
+    data = img[payload_size:]
 
     msg_size = struct.unpack('>L', packed_msg_size)[0]
 
