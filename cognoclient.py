@@ -186,6 +186,10 @@ if __name__ == '__main__':
             connect_server()
             print(GPIO_action + ' press.')
 
+            # Send instruction (1 for single press, 2 for double press)
+            instruction = 1 if GPIO_action == 'single' else 2
+            client_socket.send(instruction.to_bytes(4, 'little'))
+
             if GPIO_action == 'double':
                 # Create new UUID and save audio file under that name
                 id = str(uuid.uuid4())
@@ -212,8 +216,8 @@ if __name__ == '__main__':
                 client_socket.send(img)
 
                 # Read UUID from server
-                id_len = int.from_bytes(client_socket.read(4), 'little')
-                id = str(client_socket.read(id_len))
+                id_len = int.from_bytes(client_socket.recv(4), 'little')
+                id = str(client_socket.recv(id_len))
 
                 # Play sound from saved wav file
                 playsound(id + '.wav')
