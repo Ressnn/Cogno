@@ -112,6 +112,8 @@ while True:
     frame_data = data[:msg_size]
     data = data[msg_size:]
 
+    print('fuck u computer')
+
     img = pickle.loads(frame_data, fix_imports=True, encoding='bytes')
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
 

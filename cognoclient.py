@@ -201,7 +201,7 @@ if __name__ == '__main__':
 
                 # Read single camera frame
                 img = camera.read()[1]
-                img = cv2.imencode('.jpg', img)[1].tobytes()
+                img = cv2.imencode('.jpg', img)[1]
 
                 data = pickle.dumps(img, 0)
                 size = len(data)
