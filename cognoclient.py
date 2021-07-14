@@ -230,7 +230,7 @@ if __name__ == '__main__':
                 print('Received ID: ' + id)
 
                 # Play sound from saved wav file
-                # sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
+                sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
                 # play(sound)
 
                 print('Finished identification instruction.')
