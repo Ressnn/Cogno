@@ -53,9 +53,6 @@ def send_block(data):
 if __name__ == '__main__':
     camera = cv2.VideoCapture(0)
 
-    # Initialize audio buffer
-    audio_buffer = AudioBuffer('Data/audiobase')
-
     # Set GPIO mode to BCM (not sure what it means but it works)
     GPIO.setmode(GPIO.BCM)
     # Setup pin 4 to accept GPIO input from touch sensor
