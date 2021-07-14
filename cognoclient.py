@@ -215,12 +215,16 @@ if __name__ == '__main__':
                 # Capture a frame and encode it in JPEG
                 send_img(camera.read()[1])
 
+                print('Reading UUID...')
+
                 # Read UUID from server
                 id_len = int.from_bytes(client_socket.recv(4), 'little')
+                print('UUID length: ' + str(id_len))
+                    
                 id = client_socket.recv(id_len).decode('utf-8')
 
                 code = int.from_bytes(client_socket.recv(4), 'little')
-                print('Identification instruction with code: ' + str(code))
+                print('Finished identification instruction with code: ' + str(code))
 
                 # Play sound from saved wav file
                 sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
