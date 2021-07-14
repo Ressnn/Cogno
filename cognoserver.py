@@ -1,5 +1,5 @@
 from Recognition import FacialIdentifier
-from pydub.playback import play
+from playsound import playsound
 import struct
 import pickle
 import socket
@@ -102,7 +102,7 @@ class AudioBuffer():
         """
 
         self.dbpath = dbpath
-        self.CHUNK = 4096
+        self.CHUNK = 1024
         self.FORMAT = pyaudio.paInt16
         self.CHANNELS = 1
         self.RATE = 44100
@@ -116,7 +116,7 @@ class AudioBuffer():
             rate=self.RATE,
             input=True,
             frames_per_buffer=self.CHUNK,
-            input_device_index=1
+            input_device_index=0
         )
 
         self.frames = deque()
@@ -252,8 +252,7 @@ while True:
         print(f'Found person with id: {id}')
         print('Playing audio...')
 
-        sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
-        play(sound)
+        playsound(f'{id}.wav')
 
         print('Done playing audio.')
     elif instruction == 'double':
