@@ -137,7 +137,7 @@ while True:
         handler.add_person(img, uuid)
 
         # Send back acknoledgement
-        conn.send((44).to_bytes(4, 'little'))
+        # conn.send((44).to_bytes(4, 'little'))
     else:
         print(f'Unrecognized command: {instruction}.')
     
