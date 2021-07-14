@@ -111,12 +111,12 @@ while True:
     # 1 for identification, 2 for addition
     instruction = int.from_bytes(conn.recv(4), 'little')
 
-    # Read size of image and declare empty byte array for image data
-    img = cv2.imdecode(recv_block(), cv2.IMREAD_COLOR)
-
     if instruction == 1:
+        # Read size of image and declare empty byte array for image data
+        img = cv2.imdecode(recv_block(), cv2.IMREAD_COLOR)
+
         # Get the handler to identify the person
-        uuid = handler.identify(img)
+        uuid = handler.identify(img)        
 
         # Send back the length of the UUID string as well as the string itself
         conn.sendall(len(uuid).to_bytes(4, 'little'))
@@ -130,6 +130,9 @@ while True:
         # Read in the UUID string
         uuid_len = int.from_bytes(conn.recv(4), 'little')
         uuid = conn.recv(uuid_len).decode('utf-8')
+
+        # Read size of image and declare empty byte array for image data
+        img = cv2.imdecode(recv_block(), cv2.IMREAD_COLOR)
 
         print('Received addition instruction with UUID: ' + uuid)
 
