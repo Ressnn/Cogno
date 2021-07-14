@@ -1,18 +1,9 @@
+import RPi.GPIO as GPIO
 import cv2
 import socket
 import time
 import struct
 import pickle
-import pyaudio
-from pydub import AudioSegment
-from pydub.playback import play
-import wave
-import uuid
-from collections import deque
-import os
-import threading
-import RPi.GPIO as GPIO
-
 
 # Global variable specifically for server connection
 client_socket = None
@@ -74,42 +65,6 @@ if __name__ == '__main__':
             client_socket.send(instruction.to_bytes(4, 'little'))
 
             send_block(cv2.imencode('.jpg', camera.read()[1])[1])
-
-            # if GPIO_action == 'double':
-            #     # Create new UUID and save audio file under that name
-            #     id = str(uuid.uuid4())
-            #     audio_buffer.save(id)
-
-            #     # Send the UUID along with its length
-            #     client_socket.send(len(id).to_bytes(4, 'little'))
-            #     client_socket.send(id.encode())
-
-            #     # Read single camera frame
-            #     img = cv2.imencode('.jpg', camera.read()[1])[1]
-            #     send_block(img)
-
-            #     # code = int.from_bytes(client_socket.recv(4), 'little')
-            #     print('Finished addition instruction.')
-            # elif GPIO_action == 'single':
-            #     # Capture a frame and encode it in JPEG
-            #     img = cv2.imencode('.jpg', camera.read()[1])[1]
-            #     send_block(img)
-
-            #     # print('Reading UUID...')
-
-            #     # Read UUID from server
-            #     # id_len = int.from_bytes(client_socket.recv(4), 'little')
-            #     # print('UUID length: ' + str(id_len))
-                    
-            #     # id = client_socket.recv(id_len).decode('utf-8')
-            #     # print('Received ID: ' + id)
-
-            #     # # Play sound from saved wav file
-            #     # sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
-            #     # send_block(sound)
-            #     # play(sound)
-
-            #     print('Finished identification instruction.')
 
             GPIO_action = None
             close_connection()

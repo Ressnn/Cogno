@@ -6,7 +6,6 @@ import socket
 import cv2
 import uuid
 import pyaudio
-from pydub import AudioSegment
 from collections import deque
 import threading
 import wave
@@ -57,9 +56,7 @@ class ServerHandler():
 
         if id == -1:
             return False
-
-        #sounds = os.listdir(os.path.join(self.a_path,str(id)))
-        #fp os.path.join(os.path.join(self.a_path,str(id)),sounds[0])
+        
         return str(id)
 
     def add_person(self, image, name):
@@ -83,7 +80,7 @@ class ServerHandler():
         self.Face.add_face(image, name)
 
 class AudioBuffer():
-    def __init__(self, dbpath, seconds=15):
+    def __init__(self, dbpath, seconds=5):
         """
         An audiobuffer that keeps the last few seconds of audio in memory
 
