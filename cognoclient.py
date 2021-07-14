@@ -13,131 +13,6 @@ import os
 import threading
 import RPi.GPIO as GPIO
 
-class AudioBuffer():
-    def __init__(self, dbpath, seconds=3):
-        """
-        An audiobuffer that keeps the last few seconds of audio in memory
-
-        Parameters
-        ----------
-        dbpath : String
-            The path to the audiobase.
-        seconds : float or int
-            The the amount of time to keep in memory
-
-        Returns
-        -------
-        NoneType
-            None
-
-        """
-
-        self.dbpath = dbpath
-        self.CHUNK = 2048
-        self.FORMAT = pyaudio.paInt16
-        self.CHANNELS = 1
-        self.RATE = 44100
-        self.RECORD_SECONDS = seconds
-
-        self.p = pyaudio.PyAudio()
-
-        self.stream = self.p.open(
-            format=self.FORMAT,
-            channels=self.CHANNELS,
-            rate=self.RATE,
-            input=True,
-            frames_per_buffer=self.CHUNK,
-            input_device_index=1
-        )
-
-        self.frames = deque()
-
-        try:
-            for i in range(0, int(self.RATE / self.CHUNK * self.RECORD_SECONDS)):
-                data = self.stream.read(self.CHUNK)
-                self.frames.append(data)
-        except:
-            pass
-
-        self.AudioThread = threading.Thread(target=self._read_loop, args=())
-        self.AudioThread.start()
-
-    def read(self):
-        """
-        Reads another moment of the audio and adds it to the buffer whiled popleft() in the last second
-
-        Returns
-        -------
-        NoneType
-            None
-
-        """
-        data = self.stream.read(self.CHUNK)
-        self.frames.append(data)
-        self.frames.popleft()
-
-    def _read_loop(self):
-        """
-        Loops the read function
-
-        Returns
-        -------
-        NoneType
-            None
-
-        """
-        while True:
-            self.read()
-
-    def get(self):
-        """
-        Gets the last few seconds of the audiobuffer
-
-        Returns
-        -------
-        deque
-            A deque with raw audio data from PyAudio
-
-        """
-        return self.frames
-
-    def close(self):
-        """
-        Closes the pyaudio stream and stops recording
-
-        Returns
-        -------
-        NoneType
-            None
-
-        """
-        self.stream.stop_stream()
-        self.stream.close()
-        self.p.terminate()
-
-    def save(self, name):
-        """
-        Saves the audiostream to a file under the audiobase with a folder called "name"
-
-        Parameters
-        ----------
-        name : str
-            Name to save the folder under in the audiobase
-
-        Returns
-        -------
-        NoneType
-            None
-
-        """
-
-        wf = wave.open(os.path.join(self.dbpath, name + '.wav'), 'wb')
-        wf.setnchannels(self.CHANNELS)
-        wf.setsampwidth(self.p.get_sample_size(self.FORMAT))
-        wf.setframerate(self.RATE)
-        wf.writeframes(b''.join(list(self.frames)))
-        wf.close()
-
 
 # Global variable specifically for server connection
 client_socket = None
@@ -201,41 +76,43 @@ if __name__ == '__main__':
             instruction = 1 if GPIO_action == 'single' else 2
             client_socket.send(instruction.to_bytes(4, 'little'))
 
-            if GPIO_action == 'double':
-                # Create new UUID and save audio file under that name
-                id = str(uuid.uuid4())
-                audio_buffer.save(id)
+            send_block(cv2.imencode('.jpg', camera.read()[1])[1])
 
-                # Send the UUID along with its length
-                client_socket.send(len(id).to_bytes(4, 'little'))
-                client_socket.send(id.encode())
+            # if GPIO_action == 'double':
+            #     # Create new UUID and save audio file under that name
+            #     id = str(uuid.uuid4())
+            #     audio_buffer.save(id)
 
-                # Read single camera frame
-                img = cv2.imencode('.jpg', camera.read()[1])[1]
-                send_block(img)
+            #     # Send the UUID along with its length
+            #     client_socket.send(len(id).to_bytes(4, 'little'))
+            #     client_socket.send(id.encode())
 
-                # code = int.from_bytes(client_socket.recv(4), 'little')
-                print('Finished addition instruction.')
-            elif GPIO_action == 'single':
-                # Capture a frame and encode it in JPEG
-                img = cv2.imencode('.jpg', camera.read()[1])[1]
-                send_block(img)
+            #     # Read single camera frame
+            #     img = cv2.imencode('.jpg', camera.read()[1])[1]
+            #     send_block(img)
 
-                print('Reading UUID...')
+            #     # code = int.from_bytes(client_socket.recv(4), 'little')
+            #     print('Finished addition instruction.')
+            # elif GPIO_action == 'single':
+            #     # Capture a frame and encode it in JPEG
+            #     img = cv2.imencode('.jpg', camera.read()[1])[1]
+            #     send_block(img)
 
-                # Read UUID from server
-                id_len = int.from_bytes(client_socket.recv(4), 'little')
-                print('UUID length: ' + str(id_len))
+            #     # print('Reading UUID...')
+
+            #     # Read UUID from server
+            #     # id_len = int.from_bytes(client_socket.recv(4), 'little')
+            #     # print('UUID length: ' + str(id_len))
                     
-                id = client_socket.recv(id_len).decode('utf-8')
-                print('Received ID: ' + id)
+            #     # id = client_socket.recv(id_len).decode('utf-8')
+            #     # print('Received ID: ' + id)
 
-                # Play sound from saved wav file
-                sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
-                send_block(sound)
-                # play(sound)
+            #     # # Play sound from saved wav file
+            #     # sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
+            #     # send_block(sound)
+            #     # play(sound)
 
-                print('Finished identification instruction.')
+            #     print('Finished identification instruction.')
 
             GPIO_action = None
             close_connection()

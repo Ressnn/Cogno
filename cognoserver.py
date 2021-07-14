@@ -4,6 +4,13 @@ import struct
 import pickle
 import socket
 import cv2
+import uuid
+import pyaudio
+from pydub import AudioSegment
+from collections import deque
+import threading
+import wave
+import os
 
 class ServerHandler():
     def __init__(self, facebase_path="./Data/facebase"):
@@ -75,6 +82,131 @@ class ServerHandler():
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         self.Face.add_face(image, name)
 
+class AudioBuffer():
+    def __init__(self, dbpath, seconds=15):
+        """
+        An audiobuffer that keeps the last few seconds of audio in memory
+
+        Parameters
+        ----------
+        dbpath : String
+            The path to the audiobase.
+        seconds : float or int
+            The the amount of time to keep in memory
+
+        Returns
+        -------
+        NoneType
+            None
+
+        """
+
+        self.dbpath = dbpath
+        self.CHUNK = 4096
+        self.FORMAT = pyaudio.paInt16
+        self.CHANNELS = 1
+        self.RATE = 44100
+        self.RECORD_SECONDS = seconds
+
+        self.p = pyaudio.PyAudio()
+
+        self.stream = self.p.open(
+            format=self.FORMAT,
+            channels=self.CHANNELS,
+            rate=self.RATE,
+            input=True,
+            frames_per_buffer=self.CHUNK,
+            input_device_index=1
+        )
+
+        self.frames = deque()
+
+        try:
+            for i in range(0, int(self.RATE / self.CHUNK * self.RECORD_SECONDS)):
+                data = self.stream.read(self.CHUNK)
+                self.frames.append(data)
+        except:
+            pass
+
+        self.AudioThread = threading.Thread(target=self._read_loop, args=())
+        self.AudioThread.start()
+
+    def read(self):
+        """
+        Reads another moment of the audio and adds it to the buffer whiled popleft() in the last second
+
+        Returns
+        -------
+        NoneType
+            None
+
+        """
+        data = self.stream.read(self.CHUNK)
+        self.frames.append(data)
+        self.frames.popleft()
+
+    def _read_loop(self):
+        """
+        Loops the read function
+
+        Returns
+        -------
+        NoneType
+            None
+
+        """
+        while True:
+            self.read()
+
+    def get(self):
+        """
+        Gets the last few seconds of the audiobuffer
+
+        Returns
+        -------
+        deque
+            A deque with raw audio data from PyAudio
+
+        """
+        return self.frames
+
+    def close(self):
+        """
+        Closes the pyaudio stream and stops recording
+
+        Returns
+        -------
+        NoneType
+            None
+
+        """
+        self.stream.stop_stream()
+        self.stream.close()
+        self.p.terminate()
+
+    def save(self, name):
+        """
+        Saves the audiostream to a file under the audiobase with a folder called "name"
+
+        Parameters
+        ----------
+        name : str
+            Name to save the folder under in the audiobase
+
+        Returns
+        -------
+        NoneType
+            None
+
+        """
+
+        wf = wave.open(os.path.join(self.dbpath, name + '.wav'), 'wb')
+        wf.setnchannels(self.CHANNELS)
+        wf.setsampwidth(self.p.get_sample_size(self.FORMAT))
+        wf.setframerate(self.RATE)
+        wf.writeframes(b''.join(list(self.frames)))
+        wf.close()
+
 HOST=''
 PORT=8485
 
@@ -104,43 +236,33 @@ s.bind((HOST,PORT))
 s.listen(10)
 
 handler = ServerHandler()
+audio_buffer = AudioBuffer('./Data/audiobase')
 
 while True:
     conn, addr = s.accept()
 
     # 1 for identification, 2 for addition
-    instruction = int.from_bytes(conn.recv(4), 'little')
+    instruction = 'single' if int.from_bytes(conn.recv(4), 'little') == 1 else 'double'
+    img = cv2.imdecode(recv_block(), cv2.IMREAD_COLOR)
 
-    if instruction == 1:
-        # Read size of image and declare empty byte array for image data
-        img = cv2.imdecode(recv_block(), cv2.IMREAD_COLOR)
-
+    if instruction == 'single':
         # Get the handler to identify the person
-        uuid = handler.identify(img)        
+        id = handler.identify(img)
 
-        # Send back the length of the UUID string as well as the string itself
-        conn.sendall(len(uuid).to_bytes(4, 'little'))
-        conn.sendall(uuid.encode())
+        print(f'Found person with id: {id}')
+        print('Playing audio...')
 
-        print('Found person with UUID: ' + uuid)
-
-        sound = recv_block()
+        sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
         play(sound)
-    elif instruction == 2:
-        # Read in the UUID string
-        uuid_len = int.from_bytes(conn.recv(4), 'little')
-        uuid = conn.recv(uuid_len).decode('utf-8')
 
-        # Read size of image and declare empty byte array for image data
-        img = cv2.imdecode(recv_block(), cv2.IMREAD_COLOR)
-
-        print('Received addition instruction with UUID: ' + uuid)
-
+        print('Done playing audio.')
+    elif instruction == 'double':
         # Get handler to add person to deepface database
-        handler.add_person(img, uuid)
+        id = str(uuid.uuid4())
+        audio_buffer.save(id)
+        handler.add_person(img, id)
 
-        # Send back acknoledgement
-        # conn.send((44).to_bytes(4, 'little'))
+        print(f'Added person with id: {id}')
     else:
         print(f'Unrecognized command: {instruction}.')
     
