@@ -57,6 +57,7 @@ class FacialIdentifier():
         except:
             pass
 
+        face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
         cv2.imwrite(os.path.join(self.dbpath, name, str(uuid.uuid4())) + '.jpg', face)
 
     def find(self,face):
