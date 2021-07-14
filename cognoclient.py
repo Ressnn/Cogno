@@ -212,7 +212,7 @@ if __name__ == '__main__':
 
                 # Send the UUID along with its length
                 client_socket.send(len(id).to_bytes(4, 'little'))
-                client_socket.send(bytes(id, 'utf-8'))
+                client_socket.send(id.encode())
 
                 # code = int.from_bytes(client_socket.recv(4), 'little')
                 print('Finished addition instruction.')

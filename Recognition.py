@@ -5,6 +5,7 @@ import os
 import numpy as np
 import logging
 import uuid
+import cv2
 from playsound import playsound
 import random
 import pyaudio
@@ -33,7 +34,7 @@ class FacialIdentifier():
 
         """
         self.dbpath = dbpath
-    def add_face(self,face,name):
+    def add_face(self, face, name):
         """
         Adds a face to the facebase.
 
@@ -52,12 +53,11 @@ class FacialIdentifier():
         """
 
         try:
-            os.mkdir(os.path.join(self.dbpath,name))
+            os.mkdir(os.path.join(self.dbpath, name))
         except:
             pass
 
-        imgface = Image.fromarray(face)
-        imgface.save(os.path.join(self.dbpath,name,str(uuid.uuid4())+".jpg"))
+        cv2.imwrite(os.path.join(self.dbpath, name, str(uuid.uuid4())) + '.jpg', face)
 
     def find(self,face):
         """
