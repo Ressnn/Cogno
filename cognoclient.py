@@ -211,8 +211,8 @@ if __name__ == '__main__':
                 send_block(img)
 
                 # Send the UUID along with its length
-                client_socket.send(len(id).to_bytes(4, 'little'))
-                client_socket.send(id.encode())
+                client_socket.sendall(len(id).to_bytes(4, 'little'))
+                client_socket.sendall(id.encode())
 
                 # code = int.from_bytes(client_socket.recv(4), 'little')
                 print('Finished addition instruction.')

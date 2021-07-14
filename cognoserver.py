@@ -119,8 +119,8 @@ while True:
         uuid = handler.identify(img)
 
         # Send back the length of the UUID string as well as the string itself
-        conn.send(len(uuid).to_bytes(4, 'little'))
-        conn.send(uuid.encode())
+        conn.sendall(len(uuid).to_bytes(4, 'little'))
+        conn.sendall(uuid.encode())
 
         print('Found person with UUID: ' + uuid)
 
