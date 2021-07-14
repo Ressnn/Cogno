@@ -161,6 +161,8 @@ last_press = 0
 def GPIO_callback(channel):
     global GPIO_action, last_press
 
+    print('GPIO action detected.')
+
     press_time = round(time.time() * 1000)
     press_diff = press_time - last_press
 
@@ -228,8 +230,8 @@ if __name__ == '__main__':
                 print('Received ID: ' + id)
 
                 # Play sound from saved wav file
-                sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
-                play(sound)
+                # sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
+                # play(sound)
 
                 print('Finished identification instruction.')
 
