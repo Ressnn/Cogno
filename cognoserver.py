@@ -1,5 +1,5 @@
 from Recognition import FacialIdentifier
-import numpy as np
+from pydub.playback import play
 import struct
 import pickle
 import socket
@@ -78,7 +78,7 @@ class ServerHandler():
 HOST=''
 PORT=8485
 
-def recv_img():
+def recv_block():
     data = b''
     payload_size = struct.calcsize('>L')
 
@@ -96,8 +96,7 @@ def recv_img():
     frame_data = data[:msg_size]
     data = data[msg_size:]
 
-    img = pickle.loads(frame_data, fix_imports=True, encoding='bytes')
-    return cv2.imdecode(img, cv2.IMREAD_COLOR)
+    return pickle.loads(frame_data, fix_imports=True, encoding='bytes')
 
 # Create, bind, and listen on a socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -113,7 +112,7 @@ while True:
     instruction = int.from_bytes(conn.recv(4), 'little')
 
     # Read size of image and declare empty byte array for image data
-    img = recv_img()
+    img = cv2.imdecode(recv_block(), cv2.IMREAD_COLOR)
 
     if instruction == 1:
         # Get the handler to identify the person
@@ -124,6 +123,9 @@ while True:
         conn.send(bytes(uuid, 'utf-8'))
 
         print('Found person with UUID: ' + uuid)
+
+        sound = recv_block()
+        play(sound)
     elif instruction == 2:
         # Read in the UUID string
         uuid_len = int.from_bytes(conn.recv(4), 'little')

@@ -169,9 +169,8 @@ def GPIO_callback(channel):
     last_press = press_time
     GPIO_action = 'double' if press_diff < 250 else 'single'
 
-def send_img(img):
-    img = cv2.imencode('.jpg', img)[1]
-    data = pickle.dumps(img, 0)
+def send_block(data):
+    data = pickle.dumps(data, 0)
     size = len(data)
 
     client_socket.sendall(struct.pack(">L", size) + data)
@@ -208,7 +207,8 @@ if __name__ == '__main__':
                 audio_buffer.save(id)
 
                 # Read single camera frame
-                send_img(camera.read()[1])
+                img = cv2.imencode('.jpg', camera.read()[1])[1]
+                send_block(img)
 
                 # Send the UUID along with its length
                 client_socket.send(len(id).to_bytes(4, 'little'))
@@ -218,7 +218,8 @@ if __name__ == '__main__':
                 print('Finished addition instruction with code: ' + str(code))
             elif GPIO_action == 'single':
                 # Capture a frame and encode it in JPEG
-                send_img(camera.read()[1])
+                img = cv2.imencode('.jpg', camera.read()[1])[1]
+                send_block(img)
 
                 print('Reading UUID...')
 
@@ -231,6 +232,7 @@ if __name__ == '__main__':
 
                 # Play sound from saved wav file
                 sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
+                send_block(sound)
                 # play(sound)
 
                 print('Finished identification instruction.')
