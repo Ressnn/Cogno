@@ -222,6 +222,7 @@ if __name__ == '__main__':
                 print('UUID length: ' + str(id_len))
                     
                 id = client_socket.recv(id_len).decode('utf-8')
+                print('Received ID: ' + id)
 
                 code = int.from_bytes(client_socket.recv(4), 'little')
                 print('Finished identification instruction with code: ' + str(code))
