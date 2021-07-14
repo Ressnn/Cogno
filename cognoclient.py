@@ -215,7 +215,7 @@ if __name__ == '__main__':
                 client_socket.send(bytes(id, 'utf-8'))
 
                 # code = int.from_bytes(client_socket.recv(4), 'little')
-                print('Finished addition instruction with code: ' + str(code))
+                print('Finished addition instruction.')
             elif GPIO_action == 'single':
                 # Capture a frame and encode it in JPEG
                 img = cv2.imencode('.jpg', camera.read()[1])[1]
