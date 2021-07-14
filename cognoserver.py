@@ -233,7 +233,7 @@ s.bind((HOST,PORT))
 s.listen(10)
 
 handler = ServerHandler()
-audio_buffer = AudioBuffer('./Data/audiobase')
+audio_buffer = AudioBuffer('Data/audiobase')
 
 while True:
     conn, addr = s.accept()
@@ -246,10 +246,14 @@ while True:
         # Get the handler to identify the person
         id = handler.identify(img)
 
+        if not id:
+            print('No person found in frame.')
+            continue
+
         print(f'Found person with id: {id}')
         print('Playing audio...')
 
-        playsound(f'{id}.wav')
+        playsound(f'{os.path.join(audio_buffer.dbpath, id)}.wav')
 
         print('Done playing audio.')
     elif instruction == 'double':
