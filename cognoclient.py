@@ -211,6 +211,9 @@ if __name__ == '__main__':
                 # Send the UUID along with its length
                 client_socket.send(len(id).to_bytes(4, 'little'))
                 client_socket.send(bytes(id, 'utf-8'))
+
+                code = int.from_bytes(client_socket.recv(4), 'little')
+                print('Finished addition instruction with code: ' + str(code))
             elif GPIO_action == 'single':
                 # Capture a frame and encode it in JPEG
                 send_img(camera.read()[1])
@@ -224,12 +227,11 @@ if __name__ == '__main__':
                 id = client_socket.recv(id_len).decode('utf-8')
                 print('Received ID: ' + id)
 
-                code = int.from_bytes(client_socket.recv(4), 'little')
-                print('Finished identification instruction with code: ' + str(code))
-
                 # Play sound from saved wav file
                 sound = AudioSegment.from_wav(os.path.join(audio_buffer.dbpath, id + '.wav'))
                 play(sound)
+
+                print('Finished identification instruction.')
 
             GPIO_action = None
             close_connection()
