@@ -80,7 +80,7 @@ class ServerHandler():
         self.Face.add_face(image, name)
 
 class AudioBuffer():
-    def __init__(self, dbpath, seconds=3):
+    def __init__(self, dbpath, seconds=5):
         """
         An audiobuffer that keeps the last few seconds of audio in memory
 
@@ -248,6 +248,7 @@ while True:
 
         if not id:
             print('No person found in frame.')
+            playsound('Data/assets/ha.mp3')
             continue
 
         print(f'Found person with id: {id}')
@@ -263,6 +264,7 @@ while True:
         handler.add_person(img, id)
 
         print(f'Added person with id: {id}')
+        playsound('Data/assets/dababy.mp3')
     else:
         print(f'Unrecognized command: {instruction}.')
     

@@ -54,7 +54,7 @@ if __name__ == '__main__':
     while True:
         ms_since_last_press = round(time.time() * 1000) - last_press
 
-        if GPIO_action and ms_since_last_press > 200:
+        if GPIO_action and ms_since_last_press > 500:
             connect_server()
             print(GPIO_action + ' press.')
 
