@@ -80,7 +80,7 @@ class ServerHandler():
         self.Face.add_face(image, name)
 
 class AudioBuffer():
-    def __init__(self, dbpath, seconds=5):
+    def __init__(self, dbpath, seconds=3):
         """
         An audiobuffer that keeps the last few seconds of audio in memory
 

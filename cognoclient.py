@@ -42,8 +42,6 @@ def send_block(data):
     client_socket.sendall(struct.pack(">L", size) + data)
 
 if __name__ == '__main__':
-    camera = cv2.VideoCapture(0)
-
     # Set GPIO mode to BCM (not sure what it means but it works)
     GPIO.setmode(GPIO.BCM)
     # Setup pin 4 to accept GPIO input from touch sensor
@@ -64,7 +62,9 @@ if __name__ == '__main__':
             instruction = 1 if GPIO_action == 'single' else 2
             client_socket.send(instruction.to_bytes(4, 'little'))
 
+            camera = cv2.VideoCapture(0)
             send_block(cv2.imencode('.jpg', camera.read()[1])[1])
+            camera.release()
 
             GPIO_action = None
             close_connection()
